@@ -1,10 +1,16 @@
 import discord
+import cassiopeia as cass
 import asyncio
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
 client = discord.Client()
+
+open('leaguekey.txt', 'a').close()
+with open('leaguekey.txt', 'r') as leaguekeyfile:
+    leaguekey = leaguekeyfile.readline()
+cass.set_riot_api_key(key=leaguekey)
 
 VERSION = '0.1.0a'
 ADMINS = ['139354514091147264']
@@ -40,8 +46,30 @@ async def on_message(message):
     if (message.content.startswith(PREFIX)) & (message.author.id != client.user.id):
         message.content = message.content[len(PREFIX):]
         args = message.content.split()
-        if args[0] == 'test':
-            await sendMessage(message.channel, client.user.id)
+        if (args[0] == 'test') & (len(args) > 2):
+            tmpmessage = await  sendMessage(message.channel, "Fetchig data from Riot's Servers...")
+            tmpregion = args[1]
+            args.pop(0)
+            args.pop(0)
+            tmpsummonername = ' '.join(args)
+            summoner = cass.get_summoner(name=tmpsummonername, region=tmpregion)
+            match = summoner.current_match
+            blueteam = match.blue_team.participants
+            redteam = match.red_team.participants
+            players = 'Blue Team:```\n'
+            for player in blueteam:
+                for mastery in player.summoner.champion_masteries:
+                    if mastery.champion.id == player.champion.id:
+                        players += player.summoner.name + ' (Lvl ' + str(mastery.level) + ' ' + player.champion.name + ')' + '\n'
+                        return
+            players += '```Red Team:```\n'
+            for player in redteam:
+                for mastery in player.summoner.champion_masteries:
+                    if mastery.champion.id == player.champion.id:
+                        players += player.summoner.name + ' (Lvl ' + str(mastery.level) + ' ' + player.champion.name + ')' + '\n'
+                        return
+            players += '```'
+            await client.edit_message(tmpmessage, new_content=players)
         elif args[0] == 'msgcount':
             counter = 0
             tmp = await sendMessage(message.channel, 'Calculating...')
