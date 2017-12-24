@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.INFO)
 
 client = discord.Client()
 
-VERSION = '0.0.0a'
+VERSION = '0.1.0a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
