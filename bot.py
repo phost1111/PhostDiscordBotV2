@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.1c'
+VERSION = '0.3.1d'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -194,7 +194,8 @@ async def on_message(message):
                     tmpembed = discord.Embed(type='rich', description=message.content).set_author(
                         name='@' + message.author.name + '#' + message.author.discriminator,
                         icon_url=message.author.avatar_url)
-                    await client.send_message(client.get_channel(channelid2), embed=tmpembed)
+                    tmpchannel = client.get_channel(channelid2)
+                    await client.send_message(tmpchannel, embed=tmpembed)
 
 
 async def changePlaying(Text, Type):
