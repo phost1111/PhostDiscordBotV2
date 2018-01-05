@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.1d'
+VERSION = '0.3.2a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -57,7 +57,7 @@ async def on_message(message):
         message.content = message.content[len(PREFIX):]
         args = message.content.split()
         if (args[0] == 'test'):
-            tmpembed = discord.Embed(title='title', type='rich', description='description').set_author(name='auhorname').set_footer(text='footertext').add_field(name='fieldname', value='fieldvalue').add_field(name='fieldname', value='fieldvalue')
+            tmpembed = discord.Embed(title='title', color=0xff0000, description='description').set_author(name='auhorname').set_footer(text='footertext').add_field(name='fieldname', value='fieldvalue').add_field(name='fieldname', value='fieldvalue')
             await client.send_message(message.channel, 'teeest', embed=tmpembed)
         elif args[0] == 'msgcount':
             counter = 0
@@ -84,8 +84,15 @@ async def on_message(message):
             if not tmpisadmin:
                 await sendAndDeleteMessages(message, message.channel, 'You are not a PhostBotAdmin!')
         elif args[0] == 'help':
-            await sendMessage(message.channel, (
-            '```' + PREFIX + 'help - show all commands\n' + PREFIX + 'msgcount - How many messages have you sent in this channel? (Max 100)\n' + PREFIX + 'version - Which version is the bot on?\n' + PREFIX + 'clear [amount] - clears the last [amount]/100 messages\n' + PREFIX + 'registerCrossServer - registers the channel this command is issued in to our Cross-Server-System\n' + PREFIX + 'removeCrossServer - removes the channel this command is issued in from our Cross-Server-System\n' + PREFIX + 'lol [match / summoner] (REGION) (summoner) - get a current LoL match / a LoL player\n' + '```'))
+            tmpembed = discord.Embed(color=0xff0000)
+            tmpembed.add_field(name=PREFIX + 'help', value='show all commands', inline=False)
+            tmpembed.add_field(name=PREFIX + 'msgcount', value='How many messages have you sent in this channel? (Max 100)', inline=False)
+            tmpembed.add_field(name=PREFIX + 'version', value='Which version is the bot on?', inline=False)
+            tmpembed.add_field(name=PREFIX + 'clear [amount]', value='clears the last [amount / 100] messages', inline=False)
+            tmpembed.add_field(name=PREFIX + 'registerCrossServer', value='registers the channel this command is issued in to our Cross-Server-System', inline=False)
+            tmpembed.add_field(name=PREFIX + 'removeCrossServer', value='removes the channel this command is issued in from our Cross-Server-System', inline=False)
+            tmpembed.add_field(name=PREFIX + 'lol [~~match~~/summoner] (REGION) (summoner)', value='get a current LoL ~~match~~ / player', inline=False)
+            await client.send_message(message.channel, embed=tmpembed)
         elif args[0] == 'registerCrossServer':
             tmpisadmin = False
             for role in message.author.roles:
@@ -120,6 +127,7 @@ async def on_message(message):
             await sendMessage(message.channel, 'Successfully removed this channel from CrossServer use!')
         elif args[0] == 'lol':
             if (args[1] == 'match'):
+                await sendMessage(message.channel, 'The matchlookup is currently disabled due to a fatal bot crash caused by this.')
                 if (len(args) > 3):
                     tmpregion = args[2]
                     args.pop(0)
@@ -149,7 +157,7 @@ async def on_message(message):
                                 break
                         redteamoutput += player.summoner.name + ' (' + player.champion.name + '): ' + '``Level ' + str(
                             player.summoner.level) + ' ' + tmprank + '``\n'
-                    outputEmbed = discord.Embed(type='rich').add_field(name='Blue team', value=blueteamoutput).add_field(name='Red team', value=redteamoutput)
+                    outputEmbed = discord.Embed(color=0xff0000).add_field(name='Blue team', value=blueteamoutput).add_field(name='Red team', value=redteamoutput)
                     await client.edit_message(tmpmessage, ' ', embed=outputEmbed)
             elif args[1] == 'summoner':
                 if (len(args) > 3):
@@ -168,7 +176,7 @@ async def on_message(message):
                     tmptwisted = 'Unranked'
                     tmptotalmasteryscore = 0
                     tmphighestscorepoints = 0
-                    tmpoutputembed = discord.Embed(type='rich').set_author(name=summoner.name, icon_url=summoner.profile_icon.url).add_field(name='Level', value=summoner.level, inline=False)
+                    tmpoutputembed = discord.Embed(color=0xff0000).set_author(name=summoner.name, icon_url=summoner.profile_icon.url).add_field(name='Level', value=summoner.level, inline=False)
                     for leagueposition in summoner.league_positions:
                         if leagueposition.queue.value == 'RANKED_SOLO_5x5':
                             tmpsoloq = leagueposition.tier.value + ' ' + leagueposition.division.value
@@ -191,7 +199,7 @@ async def on_message(message):
                 tmpcrossserverchannels = CROSSSERVERCHANNELS.copy()
                 tmpcrossserverchannels.remove(channelid)
                 for channelid2 in tmpcrossserverchannels:
-                    tmpembed = discord.Embed(type='rich', description=message.content).set_author(
+                    tmpembed = discord.Embed(color=0xff0000, description=message.content).set_author(
                         name='@' + message.author.name + '#' + message.author.discriminator,
                         icon_url=message.author.avatar_url)
                     tmpchannel = client.get_channel(channelid2)
