@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.3c'
+VERSION = '0.3.3d'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -35,7 +35,7 @@ async def on_message(message):
     global PREFIX
     global ADMINPREFIX
     if message.content == ('<@' + client.user.id + '>'):
-        await sendMessage(message.channel, 'Curent prefix is "' + PREFIX + '"')
+        await sendMessage(message.channel, 'Current prefix is "' + PREFIX + '"')
         return
     if (message.channel.is_private) & (message.author.id in ADMINS):
         if (message.content.startswith(ADMINPREFIX)) & (message.author.id != client.user.id):
