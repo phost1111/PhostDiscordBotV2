@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.1b'
+VERSION = '0.3.1c'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -102,9 +102,9 @@ async def on_message(message):
             if alreadyInList:
                 await sendAndDeleteMessages(message, message.channel, 'That channel is already registered!')
                 return
-            with open('crossserverchannels.txt', 'a') as file:
-                file.write('\n' + message.channel.id)
             CROSSSERVERCHANNELS.append(message.channel.id)
+            with open('crossserverchannels.txt', 'w') as file:
+                file.write('\n'.join(CROSSSERVERCHANNELS))
             await sendMessage(message.channel, 'Successfully registered this channel for CrossServer use!')
         elif args[0] == 'removeCrossServer':
             tmpisadmin = False
