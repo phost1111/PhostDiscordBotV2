@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.3b'
+VERSION = '0.3.3c'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -47,7 +47,7 @@ async def on_message(message):
                 tmpembed.add_field(name=ADMINPREFIX + 'changePrefix [prefix]', value='Change global prefix of the bot', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'changePlaying [id] [status]', value="Change the bot's status", inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'addCrossServer [channelID]', value='Add Channel to CrossServer-System', inline=False)
-                tmpembed.add_field(name=ADMINPREFIX + 'removeCrossServer [channelID', value='Remove Channel from CrossServer-System', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'removeCrossServer [channelID]', value='Remove Channel from CrossServer-System', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'listCrossServer', value='List all CrossServer-Channel-IDs', inline=False)
                 await client.send_message(message.channel, embed=tmpembed)
             elif (adminargs[0] == 'changePrefix') & (len(adminargs) > 1):
