@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.1a'
+VERSION = '0.3.1b'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -42,7 +42,7 @@ async def on_message(message):
             message.content = message.content[len(ADMINPREFIX):]
             adminargs = message.content.split()
             if adminargs[0] == 'help':
-                await sendMessage(message.channel, '```' + ADMINPREFIX + 'changePrefix [prefix] - changes global Bot prefix\n' + ADMINPREFIX + 'changePrefix [id] [status] - change the bots playing status\n' + '```')
+                await sendMessage(message.channel, '```' + ADMINPREFIX + 'changePrefix [prefix] - changes global Bot prefix\n' + ADMINPREFIX + 'changePlaying [id] [status] - change the bots playing status\n' + '```')
             elif (adminargs[0] == 'changePrefix') & (len(adminargs) > 1):
                 adminargs.pop(0)
                 PREFIX = ' '.join(adminargs, )
