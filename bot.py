@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.2a'
+VERSION = '0.3.2b'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -203,7 +203,12 @@ async def on_message(message):
                         name='@' + message.author.name + '#' + message.author.discriminator,
                         icon_url=message.author.avatar_url)
                     tmpchannel = client.get_channel(channelid2)
-                    await client.send_message(tmpchannel, embed=tmpembed)
+                    if tmpchannel == None:
+                        CROSSSERVERCHANNELS.remove(channelid2)
+                        with open('crossserverchannels.txt', 'w') as file:
+                            file.write('\n'.join(CROSSSERVERCHANNELS))
+                    else:
+                        await client.send_message(tmpchannel, embed=tmpembed)
 
 
 async def changePlaying(Text, Type):
