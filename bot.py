@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.2b'
+VERSION = '0.3.3a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -42,7 +42,13 @@ async def on_message(message):
             message.content = message.content[len(ADMINPREFIX):]
             adminargs = message.content.split()
             if adminargs[0] == 'help':
-                await sendMessage(message.channel, '```' + ADMINPREFIX + 'changePrefix [prefix] - changes global Bot prefix\n' + ADMINPREFIX + 'changePlaying [id] [status] - change the bots playing status\n' + '```')
+                tmpembed = discord.Embed(color=0xff0000)
+                tmpembed.add_field(name=ADMINPREFIX + 'help', value='Show the admin commands', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'changePrefix [prefix]', value='Change global prefix of the bot', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'changePlaying [id] [status]', value="Change the bot's status", inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'addCrossServer [channelID]', value='Add Channel to CrossServer-System', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'removeCrossServer [channelID', value='Remove Channel from CrossServer-System', inline=False)
+                await client.send_message(message.channel, embed=tmpembed)
             elif (adminargs[0] == 'changePrefix') & (len(adminargs) > 1):
                 adminargs.pop(0)
                 PREFIX = ' '.join(adminargs, )
@@ -52,6 +58,18 @@ async def on_message(message):
                 adminargs.pop(0)
                 tmptext = ' '.join(adminargs)
                 await changePlaying(tmptext, int(tmptype))
+            elif (adminargs[0] == 'addCrossServer') & (len(adminargs) > 1):
+                tmpchannel = client.get_channel(adminargs[1])
+                if not tmpchannel == None:
+                    CROSSSERVERCHANNELS.append(adminargs[1])
+                    with open('crossserverchannels.txt', 'w') as file:
+                        file.write('\n'.join(CROSSSERVERCHANNELS))
+            elif (adminargs[0] == 'removeCrossServer') & (len(adminargs) > 1):
+                CROSSSERVERCHANNELS.remove(adminargs[1])
+                with open('crossserverchannels.txt', 'w') as file:
+                    file.write('\n'.join(CROSSSERVERCHANNELS))
+            elif adminargs[0] == 'listCrossServer':
+                await sendMessage(message.channel, '\n'.join(CROSSSERVERCHANNELS))
         return
     if (message.content.startswith(PREFIX)) & (message.author.id != client.user.id):
         message.content = message.content[len(PREFIX):]
