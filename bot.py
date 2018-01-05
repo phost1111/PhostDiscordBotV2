@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.3d'
+VERSION = '0.3.4a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -194,6 +194,7 @@ async def on_message(message):
                     tmpflexq = 'Unranked'
                     tmptwisted = 'Unranked'
                     tmptotalmasteryscore = 0
+                    tmptotalmasterypoints = 0
                     tmphighestscorepoints = 0
                     tmpoutputembed = discord.Embed(color=0xff0000).set_author(name=summoner.name, icon_url=summoner.profile_icon.url).add_field(name='Level', value=summoner.level, inline=False)
                     for leagueposition in summoner.league_positions:
@@ -204,12 +205,13 @@ async def on_message(message):
                         elif leagueposition.queue.value == 'RANKED_FLEX_TT':
                             tmptwisted = leagueposition.tier.value + ' ' + leagueposition.division.value
                     for mastery in summoner.champion_masteries:
+                        tmptotalmasterypoints += mastery.points
                         tmptotalmasteryscore += mastery.level
                         if mastery.points > tmphighestscorepoints:
                             tmphighestchamp = mastery.champion
                             tmphighestscorepoints = mastery.points
                     tmpoutputembed.add_field(name='SoloQ rank', value=tmpsoloq).add_field(name='FlexQ rank', value=tmpflexq).add_field(name='3v3 rank', value=tmptwisted)
-                    tmpoutputembed.add_field(name='Total Mastery Score', value= str(tmptotalmasteryscore)).add_field(name='Highest Mastery Score Champion', value=tmphighestchamp.name + ' (' + str(tmphighestscorepoints) + ' Mastery Points)')
+                    tmpoutputembed.add_field(name='Total Mastery Score', value= str(tmptotalmasteryscore) + ' (' + str(tmptotalmasterypoints) + ' points)').add_field(name='Highest Mastery Score Champion', value=tmphighestchamp.name + ' (' + str(tmphighestscorepoints) + ' Mastery Points)')
                     await client.edit_message(tmpmessage, ' ', embed=tmpoutputembed)
         return
     if message.author.id != client.user.id:
