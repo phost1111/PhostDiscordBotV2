@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.2.0a'
+VERSION = '0.3.0a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -44,12 +44,19 @@ async def on_message(message):
             if (adminargs[0] == 'changePrefix') & (len(adminargs) > 1):
                 adminargs.pop(0)
                 PREFIX = ' '.join(adminargs, )
+            elif (adminargs[0] == 'changePlaying') & (len(adminargs) > 2):
+                adminargs.pop(0)
+                tmptype = adminargs[0]
+                adminargs.pop(0)
+                tmptext = ' '.join(adminargs)
+                await changePlaying(tmptext, int(tmptype))
         return
     if (message.content.startswith(PREFIX)) & (message.author.id != client.user.id):
         message.content = message.content[len(PREFIX):]
         args = message.content.split()
         if (args[0] == 'test'):
-            await sendMessage(message.channel, 'Nothing to test :)')
+            tmpembed = discord.Embed(title='title', type='rich', description='description').set_author(name='auhorname').set_footer(text='footertext').add_field(name='fieldname', value='fieldvalue').add_field(name='fieldname', value='fieldvalue')
+            await client.send_message(message.channel, 'teeest', embed=tmpembed)
         elif args[0] == 'msgcount':
             counter = 0
             tmp = await sendMessage(message.channel, 'Calculating...')
@@ -109,37 +116,72 @@ async def on_message(message):
             with open('crossserverchannels.txt', 'w') as file:
                 file.write('\n'.join(CROSSSERVERCHANNELS))
             await sendMessage(message.channel, 'Successfully removed this channel from CrossServer use!')
-        elif (args[0] == 'lol') & (args[1] == 'match') & (len(args) > 3):
-            tmpregion = args[2]
-            args.pop(0)
-            args.pop(0)
-            args.pop(0)
-            tmpsummonername = ' '.join(args)
-            summoner = cass.get_summoner(name=tmpsummonername, region=tmpregion)
-            match = summoner.current_match
-            tmpmessage = await  sendMessage(message.channel, "Fetchig data from Riot's Servers...")
-            blueteam = match.blue_team.participants
-            redteam = match.red_team.participants
-            outputtext = 'Blue Team:\n```'
-            for player in blueteam:
-                tmprank = 'Unranked'
-                for leagueposition in player.summoner.league_positions:
-                    if leagueposition.queue.value == 'RANKED_SOLO_5x5':
-                        tmprank = leagueposition.tier.value + ' ' + leagueposition.division.value
-                        break
-                outputtext += player.summoner.name + ' (' + player.champion.name + '): ' + 'Level ' + str(
-                    player.summoner.level) + ' ' + tmprank + '\n'
-            outputtext += '```Red Team:```\n'
-            for player in redteam:
-                tmprank = 'Unranked'
-                for leagueposition in player.summoner.league_positions:
-                    if leagueposition.queue.value == 'RANKED_SOLO_5x5':
-                        tmprank = leagueposition.tier.value + ' ' + leagueposition.division.value
-                        break
-                outputtext += player.summoner.name + ' (' + player.champion.name + '): ' + 'Level ' + str(
-                    player.summoner.level) + ' ' + tmprank + '\n'
-            outputtext += '```'
-            await client.edit_message(tmpmessage, outputtext)
+        elif args[0] == 'lol':
+            if (args[1] == 'match'):
+                if (len(args) > 3):
+                    tmpregion = args[2]
+                    args.pop(0)
+                    args.pop(0)
+                    args.pop(0)
+                    tmpsummonername = ' '.join(args)
+                    summoner = cass.get_summoner(name=tmpsummonername, region=tmpregion)
+                    match = summoner.current_match
+                    tmpmessage = await  sendMessage(message.channel, "Fetchig data from Riot's Servers...")
+                    blueteam = match.blue_team.participants
+                    redteam = match.red_team.participants
+                    blueteamoutput = ''
+                    redteamoutput = ''
+                    for player in blueteam:
+                        tmprank = 'Unranked'
+                        for leagueposition in player.summoner.league_positions:
+                            if leagueposition.queue.value == 'RANKED_SOLO_5x5':
+                                tmprank = leagueposition.tier.value + ' ' + leagueposition.division.value
+                                break
+                        blueteamoutput += player.summoner.name + ' (' + player.champion.name + '): ' + '``Level ' + str(
+                            player.summoner.level) + ' ' + tmprank + '``\n'
+                    for player in redteam:
+                        tmprank = 'Unranked'
+                        for leagueposition in player.summoner.league_positions:
+                            if leagueposition.queue.value == 'RANKED_SOLO_5x5':
+                                tmprank = leagueposition.tier.value + ' ' + leagueposition.division.value
+                                break
+                        redteamoutput += player.summoner.name + ' (' + player.champion.name + '): ' + '``Level ' + str(
+                            player.summoner.level) + ' ' + tmprank + '``\n'
+                    outputEmbed = discord.Embed(type='rich').add_field(name='Blue team', value=blueteamoutput).add_field(name='Red team', value=redteamoutput)
+                    await client.edit_message(tmpmessage, ' ', embed=outputEmbed)
+            elif args[1] == 'summoner':
+                if (len(args) > 3):
+                    tmpregion = args[2]
+                    args.pop(0)
+                    args.pop(0)
+                    args.pop(0)
+                    tmpsummonername = ' '.join(args)
+                    summoner = cass.get_summoner(name=tmpsummonername, region=tmpregion)
+                    if (not summoner.exists) or (summoner == None):
+                        await sendMessage(message.channel, "Couldn't find " + tmpsummonername + ' in ' + tmpregion)
+                        return
+                    tmpmessage = await sendMessage(message.channel, "Fetching data from Riot's Servers...")
+                    tmpsoloq = 'Unranked'
+                    tmpflexq = 'Unranked'
+                    tmptwisted = 'Unranked'
+                    tmptotalmasteryscore = 0
+                    tmphighestscorepoints = 0
+                    tmpoutputembed = discord.Embed(type='rich').set_author(name=summoner.name, icon_url=summoner.profile_icon.url).add_field(name='Level', value=summoner.level, inline=False)
+                    for leagueposition in summoner.league_positions:
+                        if leagueposition.queue.value == 'RANKED_SOLO_5x5':
+                            tmpsoloq = leagueposition.tier.value + ' ' + leagueposition.division.value
+                        elif leagueposition.queue.value == 'RANKED_FLEX_SR':
+                            tmpflexq = leagueposition.tier.value + ' ' + leagueposition.division.value
+                        elif leagueposition.queue.value == 'RANKED_FLEX_TT':
+                            tmptwisted = leagueposition.tier.value + ' ' + leagueposition.division.value
+                    for mastery in summoner.champion_masteries:
+                        tmptotalmasteryscore += mastery.level
+                        if mastery.points > tmphighestscorepoints:
+                            tmphighestchamp = mastery.champion
+                            tmphighestscorepoints = mastery.points
+                    tmpoutputembed.add_field(name='SoloQ rank', value=tmpsoloq).add_field(name='FlexQ rank', value=tmpflexq).add_field(name='3v3 rank', value=tmptwisted)
+                    tmpoutputembed.add_field(name='Total Mastery Score', value= str(tmptotalmasteryscore)).add_field(name='Highest Mastery Score Champion', value=tmphighestchamp.name + ' (' + str(tmphighestscorepoints) + ' Mastery Points)')
+                    await client.edit_message(tmpmessage, ' ', embed=tmpoutputembed)
         return
     if message.author.id != client.user.id:
         for channelid in CROSSSERVERCHANNELS:
