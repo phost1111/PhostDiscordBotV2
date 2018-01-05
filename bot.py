@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.4a'
+VERSION = '0.3.5a'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -44,12 +44,21 @@ async def on_message(message):
             if adminargs[0] == 'help':
                 tmpembed = discord.Embed(color=0xff0000)
                 tmpembed.add_field(name=ADMINPREFIX + 'help', value='Show the admin commands', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'addAdmin [userID]', value='Add another Admin to the bot (resets on bot restart)', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'removeAdmin [userID]', value='Remove another Admin from the bot', inline=False)
+                tmpembed.add_field(name=ADMINPREFIX + 'listAdmin', value='List all Admin-IDs', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'changePrefix [prefix]', value='Change global prefix of the bot', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'changePlaying [id] [status]', value="Change the bot's status", inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'addCrossServer [channelID]', value='Add Channel to CrossServer-System', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'removeCrossServer [channelID]', value='Remove Channel from CrossServer-System', inline=False)
                 tmpembed.add_field(name=ADMINPREFIX + 'listCrossServer', value='List all CrossServer-Channel-IDs', inline=False)
                 await client.send_message(message.channel, embed=tmpembed)
+            elif (adminargs[0] == 'addAdmin') & (len(adminargs) > 1):
+                ADMINS.append(adminargs[1])
+            elif (adminargs[0] == 'removeAdmin') & (len(adminargs) > 1):
+                ADMINS.remove(adminargs[1])
+            elif adminargs[0] == 'listAdmin':
+                await sendMessage(message.channel, '\n'.join(ADMINS))
             elif (adminargs[0] == 'changePrefix') & (len(adminargs) > 1):
                 adminargs.pop(0)
                 PREFIX = ' '.join(adminargs, )
