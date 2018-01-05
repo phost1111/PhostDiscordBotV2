@@ -12,7 +12,7 @@ with open('leaguekey.txt', 'r') as leaguekeyfile:
     leaguekey = leaguekeyfile.readline()
 cass.set_riot_api_key(key=leaguekey)
 
-VERSION = '0.3.0a'
+VERSION = '0.3.0b'
 ADMINS = ['139354514091147264']
 PREFIX = '!'
 ADMINPREFIX = '*'
@@ -83,7 +83,7 @@ async def on_message(message):
                 await sendAndDeleteMessages(message, message.channel, 'You are not a PhostBotAdmin!')
         elif args[0] == 'help':
             await sendMessage(message.channel, (
-            '```' + PREFIX + 'help - show all commands\n' + PREFIX + 'msgcount - How many messages have you sent in this channel? (Max 100)\n' + PREFIX + 'version - Which version is the bot on?\n' + PREFIX + 'clear [amount] - clears the last [amount]/100 messages\n' + PREFIX + 'registerCrossServer - registers the channel this command is issued in to our Cross-Server-System\n' + PREFIX + 'removeCrossServer - removes the channel this command is issued in from our Cross-Server-System\n' + PREFIX + 'lol match (REGION) (summoner) - get the players in your current LoL match\n' + '```'))
+            '```' + PREFIX + 'help - show all commands\n' + PREFIX + 'msgcount - How many messages have you sent in this channel? (Max 100)\n' + PREFIX + 'version - Which version is the bot on?\n' + PREFIX + 'clear [amount] - clears the last [amount]/100 messages\n' + PREFIX + 'registerCrossServer - registers the channel this command is issued in to our Cross-Server-System\n' + PREFIX + 'removeCrossServer - removes the channel this command is issued in from our Cross-Server-System\n' + PREFIX + 'lol [match / summoner] (REGION) (summoner) - get a current LoL match / a LoL player\n' + '```'))
         elif args[0] == 'registerCrossServer':
             tmpisadmin = False
             for role in message.author.roles:
