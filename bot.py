@@ -37,7 +37,7 @@ async def on_message(message):
     if message.content == ('<@' + client.user.id + '>'):
         await sendMessage(message.channel, 'Current prefix is "' + PREFIX + '"')
         return
-    if (message.channel.is_private) & (message.author.id in ADMINS):
+    if message.channel.is_private & (message.author.id in ADMINS):
         if (message.content.startswith(ADMINPREFIX)) & (message.author.id != client.user.id):
             message.content = message.content[len(ADMINPREFIX):]
             adminargs = message.content.split()
@@ -119,7 +119,7 @@ async def on_message(message):
             tmpembed.add_field(name=PREFIX + 'clear [amount]', value='clears the last [amount / 100] messages', inline=False)
             tmpembed.add_field(name=PREFIX + 'registerCrossServer', value='registers the channel this command is issued in to our Cross-Server-System', inline=False)
             tmpembed.add_field(name=PREFIX + 'removeCrossServer', value='removes the channel this command is issued in from our Cross-Server-System', inline=False)
-            tmpembed.add_field(name=PREFIX + 'lol [~~match~~/summoner] (REGION) (summoner)', value='get a current LoL ~~match~~ / player', inline=False)
+            tmpembed.add_field(name=PREFIX + 'lol [~~match~~/summoner] (REGION) (summoner)', value='get a current LoL ~~match /~~ player', inline=False)
             await client.send_message(message.channel, embed=tmpembed)
         elif args[0] == 'registerCrossServer':
             tmpisadmin = False
@@ -154,9 +154,11 @@ async def on_message(message):
                 file.write('\n'.join(CROSSSERVERCHANNELS))
             await sendMessage(message.channel, 'Successfully removed this channel from CrossServer use!')
         elif args[0] == 'lol':
-            if (args[1] == 'match'):
+            if args[1] == 'match':
                 await sendMessage(message.channel, 'The matchlookup is currently disabled due to a fatal bot crash caused by this.')
-                if (len(args) > 3):
+                return
+                # noinspection PyUnreachableCode
+                if len(args) > 3:
                     tmpregion = args[2]
                     args.pop(0)
                     args.pop(0)
@@ -188,7 +190,7 @@ async def on_message(message):
                     outputEmbed = discord.Embed(color=0xff0000).add_field(name='Blue team', value=blueteamoutput).add_field(name='Red team', value=redteamoutput)
                     await client.edit_message(tmpmessage, ' ', embed=outputEmbed)
             elif args[1] == 'summoner':
-                if (len(args) > 3):
+                if len(args) > 3:
                     tmpregion = args[2]
                     args.pop(0)
                     args.pop(0)
@@ -233,7 +235,7 @@ async def on_message(message):
                         name='@' + message.author.name + '#' + message.author.discriminator,
                         icon_url=message.author.avatar_url)
                     tmpchannel = client.get_channel(channelid2)
-                    if tmpchannel == None:
+                    if tmpchannel is None:
                         CROSSSERVERCHANNELS.remove(channelid2)
                         with open('crossserverchannels.txt', 'w') as file:
                             file.write('\n'.join(CROSSSERVERCHANNELS))
